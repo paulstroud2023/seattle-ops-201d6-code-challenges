@@ -2,8 +2,8 @@
 
 # Script: Ops 201 Class 03 Ops Challenge Solution
 # Author: Paul Stroud
-# Date of latest revision: 02/08/23
-# Purpose: Basic script functions
+# Date of latest revision: 02/09/23
+# Purpose: Arrays
 #
 # Resources used: google, https://devhints.io/bash
 
