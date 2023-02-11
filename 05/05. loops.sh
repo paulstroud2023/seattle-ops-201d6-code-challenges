@@ -13,11 +13,16 @@ echo "[ Terminator v0.0.1 ]"
 echo "Currently running processes:"
 ps  # display active processes
 
-echo -n "Enter a PID to terminate: "
-read input  # save the entered PID into a var
-echo -n "Killing PID" $input "..."
-kill -9 $input && echo "SUCCESS!"   # kill the process by PID
+test="y"
+while [[ $test == "y" ]]; do
+    echo -n "Enter a PID to terminate: "
+    read input  # save the entered PID into a var
+    echo -n "Killing PID" $input "..."
+    kill -9 $input && echo "SUCCESS!"   # kill the process by PID
 
+    echo -n "Terminate another PID? (y/n) "
+    read test
+done
 
 echo -e "\n^^^ Job's done! ^^^\n"
 # End
