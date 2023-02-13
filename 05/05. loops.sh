@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script: Ops 201 Class 03 Ops Challenge Solution
+# Script: Ops 201 Class 05 Ops Challenge Solution
 # Author: Paul Stroud
 # Date of latest revision: 02/10/23
 # Purpose: Loops

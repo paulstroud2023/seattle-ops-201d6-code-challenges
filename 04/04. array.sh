@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script: Ops 201 Class 03 Ops Challenge Solution
+# Script: Ops 201 Class 04 Ops Challenge Solution
 # Author: Paul Stroud
 # Date of latest revision: 02/09/23
 # Purpose: Arrays
