@@ -35,6 +35,9 @@ lshw -class display
 echo -e "\n> NETWORK ADAPTER INFO:"
 lshw -class network
 
+echo -e "\n> BIOS INFO:"
+dmidecode -H 0000 | tail -n +9
+
 
 echo -e "\n*** Mission complete! ***\n"
 # End
