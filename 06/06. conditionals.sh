@@ -10,7 +10,7 @@
 # Main
 
 echo "< Code Challenge 06 >"
-echo -n "Enter file name: "
+echo -n "Enter file/dir name: "
 read FNAME  # read user input
 
 # a while loop to validate user input
