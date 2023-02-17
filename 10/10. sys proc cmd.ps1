@@ -12,6 +12,7 @@ echo "*** I've got the power! 🤠 ***"
 
 
 
+
 # Print to the terminal screen all active processes ordered by highest CPU time consumption at the top.
 Get-Process | Sort-Object -Property CPU -Descending
 
@@ -45,6 +46,7 @@ for ($i=0; $i -lt 10; $i++)
 # Kill a process by its Process Identification Number. Choose a process whose termination won't destabilize the system, such as Internet Explorer or MS Edge. 
 Start-Process notepad.exe
  
+Get-Process -name mspaint | Where-Object -Property ProcessName -eq mspaint | Select-Object -ExpandProperty Id | ForEach-Object { Stop-Process -Id $_ }
 
 
 
