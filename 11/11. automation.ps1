@@ -3,7 +3,7 @@
 # Date of latest revision: 02/20/23
 # Purpose: Automation Commands
 #
-# Resources used: https://github.com/superswan/Powershell-SysAdmin
+# Resources used: https://github.com/superswan/Powershell-SysAdmin, google, chatgpt
 
 # Main
 
@@ -27,6 +27,12 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://git.io/debloat'))
 
 # Enable Hyper-V
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+#Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V
+
 
 # Disable SMBv1, an insecure protocol
 Set-SmbServerConfiguration -EnableSMB1Protocol $false -Force
+Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol
+
+
+
