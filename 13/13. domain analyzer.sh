@@ -5,21 +5,22 @@
 # Date of latest revision: 02/22/23
 # Purpose: Domain analyzer
 #
-# Resources used: google, https://devhints.io/bash, https://linuxize.com/post/bash-check-if-file-exists/
+# Resources used: google, chatgpt
 
 # Main
 
 addr_check() {
-              if [[ $1 =~ "w+\.[a-z]{3}" ]]
+              # echo $# $1
+              # return
+              regex="\.[a-z]{3}"
+              if [[ $ADDR =~ $regex ]];
                 then
-                    echo $1
-                    return 0
-
+                  # echo "GOOD"
+                  return 0
                 else
-                  echo "1"
+                  # echo "NO BUENO"
                   return 1
               fi
-              return
              }
 
 
@@ -28,21 +29,22 @@ echo "Knock, knock. Whois there?"
 
 echo -n "Enter a domain/website: " && read ADDR
 
-#whois -h $ADDR
-echo [[ $(addr_check $ADDR) -eq 0 ]]
-
-exit
-
-
-# check for root access
-if (( $(id -u) == 0 ))  # UID == 0 is root
-  then echo "Root access check: OK"
-  else  # exit the script
-        echo "Root access check: FAILED"
-        echo "Please re-run this script as sudo/root"
-        exit
+if [[ $(addr_check $ADDR) -eq 1 ]];
+  then
+    echo "Invalid domain name"
+    exit
+  else
+    echo -n "Compiling domain info and saving it to ~/domain_info.txt ..."
+    echo "> WHOIS:"  > ~/domain_info.txt
+    whois -H $ADDR >> ~/domain_info.txt
+    echo "> DIG:" >> ~/domain_info.txt
+    dig $ADDR >> ~/domain_info.txt
+    echo "> HOST:" >> ~/domain_info.txt
+    host $ADDR >> ~/domain_info.txt
+    echo "> NSLOOKUP:" >> ~/domain_info.txt
+    nslookup $ADDR >> ~/domain_info.txt
+    echo "DONE!"
 fi
-
 
 
 echo -e "\n*** Mission complete! ***\n"
