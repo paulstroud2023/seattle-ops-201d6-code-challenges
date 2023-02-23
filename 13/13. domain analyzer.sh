@@ -9,17 +9,18 @@
 
 # Main
 
+# a function to check whether the domain name is valid
 addr_check() {
-              # echo $# $1
-              # return
-              regex="\.[a-z]{3}"
-              if [[ $ADDR =~ $regex ]];
+              # a regex to match top level domain;
+              # for some reason it doesn't work with *
+              regex="\.[a-z]{3}"  
+              
+              # compare function argument string to regex
+              if [[ $1 =~ $regex ]];
                 then
-                  # echo "GOOD"
-                  return 0
+                  return 0  # return 0 = OK
                 else
-                  # echo "NO BUENO"
-                  return 1
+                  return 1  # return 1 = ERROR
               fi
              }
 
@@ -27,14 +28,17 @@ addr_check() {
 
 echo "Knock, knock. Whois there?"
 
+# user prompt and input
 echo -n "Enter a domain/website: " && read ADDR
 
+# validate the domain name 
 if [[ $(addr_check $ADDR) -eq 1 ]];
   then
     echo "Invalid domain name"
     exit
   else
     echo -n "Compiling domain info and saving it to ~/domain_info.txt ..."
+    # run commands and save output to the text file
     echo "> WHOIS:"  > ~/domain_info.txt
     whois -H $ADDR >> ~/domain_info.txt
     echo "> DIG:" >> ~/domain_info.txt
