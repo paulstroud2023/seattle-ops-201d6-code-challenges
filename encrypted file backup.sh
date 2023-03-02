@@ -75,7 +75,7 @@ echo -e "\n> MOUNTING ENCRYPTED STORAGE AT /media/USB ..."
 sudo mount /dev/mapper/BACKUP /media/USB
 
 # data transfer/backup
-rsync -avz --progress --stats /media/file_share /media/USB
+rsync -avz --progress --stats /media/file_share/ /media/USB
 
 # countdown before cleaning up
 echo -e "\n> FILE BACKUP COMPLETE!"
