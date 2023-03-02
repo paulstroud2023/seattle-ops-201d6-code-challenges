@@ -37,8 +37,7 @@ echo -e "\n"
 sleep 2
 
 # prompt user to select a drive
-read -p "Please enter the drive number: " DRIVE
-#echo "DRIVE=" $DRIVE
+read -p "PLEASE ENTER THE DRIVE NUMBER: " DRIVE
 
 # save sd* drive names to an array
 DRV_ARRAY=($(lsblk -o NAME -nr | grep "^sd"))
@@ -48,7 +47,6 @@ DRV_ID=${DRV_ARRAY[$DRIVE-1]}
 
 # confirm user's selection
 echo -e "\n> SELECTED DRIVE = " $DRV_ID
-#sudo fdisk -l /dev/$DRV_ID
 
 
 # check if the mount point exists
@@ -78,13 +76,13 @@ echo -e "\n> MOUNTING ENCRYPTED STORAGE AT /media/USB ..."
 sudo mount /dev/mapper/BACKUP /media/USB
 
 # data transfer/backup
-#rsync -avz --progress --stats /media/file_share /media/USB
+rsync -avz --progress --stats /media/file_share /media/USB
 
 # countdown before cleaning up
 echo -e "\n> FILE BACKUP COMPLETE!"
 echo -n "The script will continue in "
 for i in $(seq 5 -1 1); do
-   echo $i ", "
+   echo -n $i ", "
    sleep 1
 done
 
