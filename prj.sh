@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Script: Ops 201 Class 13 Ops Challenge Solution
-# Author: Paul Stroud
-# Date of latest revision: 02/22/23
-# Purpose: Domain analyzer
+# Script: Space O data backup
+# Author: Paul Stroud / Fourward Electronics
+# Date of latest revision: 03/01/23
+# Purpose: File backup to an encrypted external drive
 #
 # Resources used: google, chatgpt
 
 # Main
+
 # check for root access
 if (( $(id -u) == 0 ))  # UID == 0 is root/sudo
   then echo "Root access check: OK"
@@ -17,53 +18,96 @@ if (( $(id -u) == 0 ))  # UID == 0 is root/sudo
         exit
 fi
 
-echo -e "THIS SCRIPT WILL BACKUP /media/file_share TO THE SELECTED DRIVE"
-# echo -e "THIS SCRIPT WILL BACKUP /media/file_share"
-# echo -e "TO THE SELECTED DRIVE"
+echo -e "\n> THIS SCRIPT WILL BACKUP /media/file_share TO THE SELECTED DRIVE"
+sleep 3
 
-echo -n -e "\nThe OS is installed on: "
+# show linux mount point
+echo -n -e "\n> THE OS IS INSTALLED ON: "
+# lsblk output sanitized to only print drive name and mount point
+# first awk filters out the root mount point
+# second awk capitalizes the output
 lsblk -l -no NAME,MOUNTPOINT | awk '$2=="/"{print $1}' | awk '{print toupper($0)}'
 echo -e "\n"
+sleep 2
 
-echo "All available drives:"
+# list all drives on the system
+echo "> ALL AVAILABLE DRIVES:"
 lsblk -l | grep sd | nl
-read -p "Please enter the drive number: " DRIVE
-echo "DRIVE=" $DRIVE
-DRV_ARRAY=($(lsblk -o NAME -nr | grep "^sd"))
+echo -e "\n"
+sleep 2
 
+# prompt user to select a drive
+read -p "Please enter the drive number: " DRIVE
+#echo "DRIVE=" $DRIVE
+
+# save sd* drive names to an array
+DRV_ARRAY=($(lsblk -o NAME -nr | grep "^sd"))
+# grab the selected drive name and assign to DRV_ID
 DRV_ID=${DRV_ARRAY[$DRIVE-1]}
 
-echo -e "\n DRIVE ID = " $DRV_ID
-sudo fdisk -l /dev/$DRV_ID
+
+# confirm user's selection
+echo -e "\n> SELECTED DRIVE = " $DRV_ID
+#sudo fdisk -l /dev/$DRV_ID
 
 
-# for i in ${drv_array[@]}; do
-#    echo -n $i " "  
-# done
-exit
-
-# user prompt and input
-echo -n "Enter a domain/website: " && read ADDR
-
-# validate the domain name 
-if [[ $(addr_check $ADDR) -eq 1 ]];
-  then
-    echo "Invalid domain name"
-    exit
-  else
-    echo -n "Compiling domain info and saving it to ~/domain_info.txt ..."
-    # run commands and save output to the text file
-    echo "> WHOIS:"  > ~/domain_info.txt
-    whois -H $ADDR >> ~/domain_info.txt
-    echo "> DIG:" >> ~/domain_info.txt
-    dig $ADDR >> ~/domain_info.txt
-    echo "> HOST:" >> ~/domain_info.txt
-    host $ADDR >> ~/domain_info.txt
-    echo "> NSLOOKUP:" >> ~/domain_info.txt
-    nslookup $ADDR >> ~/domain_info.txt
-    echo "DONE!"
+# check if the mount point exists
+# create dir if needed
+if ! [[ -d /media/USB ]]  #check if dir exists
+  then  
+    echo -n "Creating " /media/USB "..."
+    sleep 1
+    mkdir /media/USB
 fi
 
+# format the external drive with a luks header
+# user must enter the password
+echo -e "\n> ENCRYPTING EXTERNAL STORAGE AT /dev/" $DRV_ID " ..."
+sudo cryptsetup luksFormat /dev/$DRV_ID
 
-echo -e "\n*** Mission complete! ***\n"
+# open the new luks volume
+echo -e "\n> OPENING ENCRYPTED STORAGE ..."
+sudo cryptsetup luksOpen /dev/$DRV_ID BACKUP
+
+# the luks volume needs a filesystem
+echo -e "\n> FORMATTING ENCRYPTED STORAGE w/ NTFS ..."
+sudo mkfs.ntfs -f /dev/mapper/BACKUP
+
+# mount the luks volume for file access
+echo -e "\n> MOUNTING ENCRYPTED STORAGE AT /media/USB ..."
+sudo mount /dev/mapper/BACKUP /media/USB
+
+# data transfer/backup
+#rsync -avz --progress --stats /media/file_share /media/USB
+
+# countdown before cleaning up
+echo -e "\n> FILE BACKUP COMPLETE!"
+echo -n "The script will continue in "
+for i in $(seq 5 -1 1); do
+   echo $i ", "
+   sleep 1
+done
+
+# unmount and close the luks volume
+echo -e "\n> UNMOUNTING ENCRYPTED STORAGE ..."
+sudo umount /media/USB 
+echo -e "\n> CLOSING ENCRYPTED STORAGE ..."
+sudo cryptsetup luksClose BACKUP
+sleep 1
+
+# PSA for the user
+echo -e "\n> PLEASE EJECT THE DRIVE BEFORE UNPLUGGING!"
+sleep 3
+
+
+echo -n "DRV_ARRAY = ("
+for i in ${DRV_ARRAY[@]}; do
+   echo -n $i " "  
+done
+echo ")"
+
+
+
+echo "^^^ SCRIPT COMPLETE! ^^^"
+
 # End
