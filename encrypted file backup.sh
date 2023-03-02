@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script: Space O data backup
-# Author: Paul Stroud / Fourward Electronics
+# Author: Paul Stroud @ Fourward Electronics
 # Date of latest revision: 03/01/23
 # Purpose: File backup to an encrypted external drive
 #
@@ -27,7 +27,6 @@ echo -n -e "\n> THE OS IS INSTALLED ON: "
 # first awk filters out the root mount point
 # second awk capitalizes the output
 lsblk -l -no NAME,MOUNTPOINT | awk '$2=="/"{print $1}' | awk '{print toupper($0)}'
-echo -e "\n"
 sleep 2
 
 # list all drives on the system
@@ -82,7 +81,7 @@ rsync -avz --progress --stats /media/file_share /media/USB
 echo -e "\n> FILE BACKUP COMPLETE!"
 echo -n "The script will continue in "
 for i in $(seq 5 -1 1); do
-   echo -n $i ", "
+   echo -n $i
    sleep 1
 done
 
@@ -96,14 +95,6 @@ sleep 1
 # PSA for the user
 echo -e "\n> PLEASE EJECT THE DRIVE BEFORE UNPLUGGING!"
 sleep 3
-
-
-echo -n "DRV_ARRAY = ("
-for i in ${DRV_ARRAY[@]}; do
-   echo -n $i " "  
-done
-echo ")"
-
 
 
 echo "^^^ SCRIPT COMPLETE! ^^^"
